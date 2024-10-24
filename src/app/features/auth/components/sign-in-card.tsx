@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
@@ -8,6 +9,9 @@ import { FaGithub } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+// api
+import { useLogin } from "../api/use-login";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DottedSeperator } from "@/components/dotted-seperator";
@@ -20,9 +24,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 import { loginSchema } from "../schema";
+import { client } from "@/lib/rpc";
 export const SignInCard = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -31,8 +35,12 @@ export const SignInCard = () => {
       password: "",
     },
   });
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
+
+  const { mutateAsync } = useLogin();
+
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    // const { email, password } = await mutateAsync({ json: values });
+    client.api.auth.login.$post({ json: values });
   }
 
   return (
