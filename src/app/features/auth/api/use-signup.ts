@@ -4,14 +4,16 @@ import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/rpc";
 import { AuthClientError } from "../utils";
 
-type RequestType = InferRequestType<(typeof client.api.auth.login)["$post"]>;
-type ResponseType = InferResponseType<(typeof client.api.auth.login)["$post"]>;
+type RequestType = InferRequestType<(typeof client.api.auth.register)["$post"]>;
+type ResponseType = InferResponseType<
+  (typeof client.api.auth.register)["$post"]
+>;
 
-export const useLogin = () => {
+export const useSignup = () => {
   const mutation = useMutation<ResponseType, AuthClientError, RequestType>({
-    mutationKey: ["loginUser"],
+    mutationKey: ["signup-user"],
     mutationFn: async ({ json }: RequestType) => {
-      const response = await client.api.auth.login.$post({ json });
+      const response = await client.api.auth.register.$post({ json });
 
       // if there is error
       if (!response.ok) {

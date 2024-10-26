@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
@@ -26,8 +27,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { loginSchema } from "../schema";
-import { client } from "@/lib/rpc";
+import { toastError } from "../utils";
+import { toast } from "sonner";
 export const SignInCard = () => {
+  const { mutate: signinUser } = useLogin();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -39,8 +44,19 @@ export const SignInCard = () => {
   const { mutateAsync } = useLogin();
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    // const { email, password } = await mutateAsync({ json: values });
-    client.api.auth.login.$post({ json: values });
+    signinUser(
+      { json: values },
+      {
+        onSuccess: ({ message }) => {
+          toast.success(message, { position: "top-right" });
+
+          router.push("/account");
+        },
+        onError: (err) => {
+          toastError(err);
+        },
+      }
+    );
   }
 
   return (

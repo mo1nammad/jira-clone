@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
@@ -29,8 +31,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { signupSchema } from "../schema";
+import { useSignup } from "../api/use-signup";
+import { toastError } from "../utils";
 
 export const SignUpCard = () => {
+  const router = useRouter();
+  const { mutate: signupUser } = useSignup();
+
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -39,8 +46,18 @@ export const SignUpCard = () => {
       name: "",
     },
   });
-  function onSubmit(values: z.infer<typeof signupSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof signupSchema>) {
+    signupUser(
+      { json: values },
+      {
+        onSuccess: ({ message }) => {
+          router.push("/account");
+        },
+        onError: (err) => {
+          toastError(err);
+        },
+      }
+    );
   }
 
   return (
