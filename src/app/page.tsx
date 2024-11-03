@@ -1,16 +1,28 @@
+"use client";
+
+import { useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useCurrent } from "./features/auth/api/use-current";
+import { useLogout } from "./features/auth/api/use-logout";
+import { UserButton } from "./features/auth/components/user-button";
 
 export default function Home() {
+  const { query, redirectToAuth } = useCurrent();
+  const { data: userData, isLoading } = query;
+
+  const { mutate: logoutUser } = useLogout();
+
+  const handleLogout = () => logoutUser(undefined);
+
+  useEffect(() => {
+    if (!userData && !isLoading) redirectToAuth();
+  }, [isLoading, userData]);
+
   return (
-    <div className="flex items-center gap-x-4 pt-4">
-      <Button>hello</Button>
-      <Button variant={"destructive"}>destructive</Button>
-      <Button variant={"ghost"}>ghost</Button>
-      <Button variant={"secondary"}>secondary</Button>
-      <Button variant={"muted"}>muted</Button>
-      <Button variant={"teritary"}>teritary</Button>
-      <Input />
+    <div>
+      <UserButton />
     </div>
   );
 }

@@ -1,17 +1,20 @@
 import { Hono } from "hono";
-import { setCookie } from "hono/cookie";
+import { setCookie, deleteCookie } from "hono/cookie";
 import { zValidator } from "@hono/zod-validator";
 import { ID } from "node-appwrite";
 
 import { createAdminClient, AppwriteErrorType } from "@/lib/appwrite";
 
+import { sessionMiddleware } from "@/lib/session-middleware";
 import { loginSchema, signupSchema } from "../schema";
 import { AUTH_SESSION_KEY } from "../constants";
 
-export const loginAuth = new Hono().post(
-  "/login",
-  zValidator("json", loginSchema),
-  async (c) => {
+export const auth = new Hono()
+  .get("/current", sessionMiddleware, (c) => {
+    const user = c.var.user;
+    return c.json({ user });
+  })
+  .post("/login", zValidator("json", loginSchema), async (c) => {
     const { email, password } = c.req.valid("json");
 
     const { account } = await createAdminClient();
@@ -40,13 +43,8 @@ export const loginAuth = new Hono().post(
         }
       );
     }
-  }
-);
-
-export const signupAuth = new Hono().post(
-  "/register",
-  zValidator("json", signupSchema),
-  async (c) => {
+  })
+  .post("/register", zValidator("json", signupSchema), async (c) => {
     const { email, password, name } = c.req.valid("json");
 
     const { account } = await createAdminClient();
@@ -82,5 +80,11 @@ export const signupAuth = new Hono().post(
         }
       );
     }
-  }
-);
+  })
+  .post("/logout", sessionMiddleware, async (c) => {
+    const account = c.var.account;
+
+    deleteCookie(c, AUTH_SESSION_KEY);
+    await account.deleteSession("current");
+    return c.json({ message: "success" });
+  });
