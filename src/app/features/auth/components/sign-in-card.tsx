@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
@@ -13,6 +13,7 @@ import { z } from "zod";
 
 // api
 import { useLogin } from "../api/use-login";
+import { useProtectSession } from "../hooks/use-protect-route";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DottedSeperator } from "@/components/dotted-seperator";
@@ -25,13 +26,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import AuthButtonMotion from "./auth-button-motion";
 
 import { loginSchema } from "../schema";
 import { toastError } from "../utils";
-import { toast } from "sonner";
+
 export const SignInCard = () => {
-  const { mutate: signinUser } = useLogin();
-  const router = useRouter();
+  useProtectSession();
+
+  const { mutate: signinUser, isPending } = useLogin();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -41,17 +44,10 @@ export const SignInCard = () => {
     },
   });
 
-  const { mutateAsync } = useLogin();
-
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     signinUser(
       { json: values },
       {
-        onSuccess: ({ message }) => {
-          toast.success(message, { position: "top-right" });
-
-          router.push("/account");
-        },
         onError: (err) => {
           toastError(err);
         },
@@ -101,9 +97,14 @@ export const SignInCard = () => {
               )}
             />
 
-            <Button type="submit" size={"lg"} className="w-full">
+            <AuthButtonMotion
+              disabled={isPending}
+              type="submit"
+              size={"lg"}
+              className="w-full"
+            >
               Log In
-            </Button>
+            </AuthButtonMotion>
           </form>
         </Form>
       </CardContent>

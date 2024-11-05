@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
@@ -33,9 +32,11 @@ import { Button } from "@/components/ui/button";
 import { signupSchema } from "../schema";
 import { useSignup } from "../api/use-signup";
 import { toastError } from "../utils";
+import { useProtectSession } from "../hooks/use-protect-route";
 
 export const SignUpCard = () => {
-  const router = useRouter();
+  useProtectSession();
+
   const { mutate: signupUser } = useSignup();
 
   const form = useForm<z.infer<typeof signupSchema>>({
@@ -50,9 +51,6 @@ export const SignUpCard = () => {
     signupUser(
       { json: values },
       {
-        onSuccess: ({ message }) => {
-          router.push("/account");
-        },
         onError: (err) => {
           toastError(err);
         },
