@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import AuthButtonMotion from "./auth-button-motion";
 
 import { signupSchema } from "../schema";
 import { useSignup } from "../api/use-signup";
@@ -37,7 +38,7 @@ import { useProtectSession } from "../hooks/use-protect-route";
 export const SignUpCard = () => {
   useProtectSession();
 
-  const { mutate: signupUser } = useSignup();
+  const { mutate: signupUser, isPending } = useSignup();
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -128,9 +129,14 @@ export const SignUpCard = () => {
               )}
             />
 
-            <Button type="submit" size={"lg"} className="w-full">
+            <AuthButtonMotion
+              disabled={isPending}
+              type="submit"
+              size={"lg"}
+              className="w-full"
+            >
               Sign Up
-            </Button>
+            </AuthButtonMotion>
           </form>
         </Form>
       </CardContent>

@@ -23,9 +23,11 @@ export const UserButton = () => {
   useProtectRoute();
 
   const { query } = useCurrent();
-  const { mutate: logoutFn } = useLogout();
   const { data: userData, isLoading } = query;
 
+  const { mutate: logoutFn } = useLogout();
+
+  if (!userData) return null;
   if (isLoading) {
     return (
       <div className="size-10 rounded-full flex items-center justify-center bg-neutral-200 border-neutral-300">
@@ -33,8 +35,6 @@ export const UserButton = () => {
       </div>
     );
   }
-
-  if (!userData) return null;
 
   const { name, email } = userData.user;
   const avatarFallback = name
