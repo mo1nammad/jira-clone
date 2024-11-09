@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import AuthButtonMotion from "./auth-button-motion";
+import MotionSubmitButton from "@/components/motion-submit-btn";
 
 import { loginSchema } from "../schema";
 import { toastError } from "../utils";
@@ -97,14 +97,14 @@ export const SignInCard = () => {
               )}
             />
 
-            <AuthButtonMotion
+            <MotionSubmitButton
               disabled={isPending}
               type="submit"
               size={"lg"}
               className="w-full"
             >
               Log In
-            </AuthButtonMotion>
+            </MotionSubmitButton>
           </form>
         </Form>
       </CardContent>

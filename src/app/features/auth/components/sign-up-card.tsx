@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import AuthButtonMotion from "./auth-button-motion";
+import MotionSubmitButton from "@/components/motion-submit-btn";
 
 import { signupSchema } from "../schema";
 import { useSignup } from "../api/use-signup";
@@ -129,14 +129,14 @@ export const SignUpCard = () => {
               )}
             />
 
-            <AuthButtonMotion
+            <MotionSubmitButton
               disabled={isPending}
               type="submit"
               size={"lg"}
               className="w-full"
             >
               Sign Up
-            </AuthButtonMotion>
+            </MotionSubmitButton>
           </form>
         </Form>
       </CardContent>
