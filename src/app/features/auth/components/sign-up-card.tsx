@@ -32,7 +32,6 @@ import MotionSubmitButton from "@/components/motion-submit-btn";
 
 import { signupSchema } from "../schema";
 import { useSignup } from "../api/use-signup";
-import { toastError } from "../utils";
 import { useProtectSession } from "../hooks/use-protect-route";
 
 export const SignUpCard = () => {
@@ -49,14 +48,7 @@ export const SignUpCard = () => {
     },
   });
   async function onSubmit(values: z.infer<typeof signupSchema>) {
-    signupUser(
-      { json: values },
-      {
-        onError: (err) => {
-          toastError(err);
-        },
-      }
-    );
+    signupUser({ json: values });
   }
 
   return (

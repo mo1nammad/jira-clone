@@ -36,9 +36,11 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
     },
   });
 
-  const onSubmit = (value: FormSchemaType) => {
-    createWorkspace({ json: value });
-  };
+  const onSubmit = (value: FormSchemaType) =>
+    createWorkspace(
+      { json: value },
+      { onSuccess: () => form.setValue("name", "") }
+    );
 
   return (
     <Card className="w-full h-full border-none shadow-none">
@@ -79,7 +81,11 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
               >
                 Cancel
               </Button>
-              <MotionSubmitButton className="w-48" size="lg" disabled={false}>
+              <MotionSubmitButton
+                className="w-48"
+                size="lg"
+                disabled={isPending}
+              >
                 <span>Create workspace</span>
               </MotionSubmitButton>
             </div>

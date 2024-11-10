@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
-import { AuthClientError } from "../utils";
+import { AuthClientError, toastError } from "../utils";
 
 type RequestType = InferRequestType<(typeof client.api.auth.register)["$post"]>;
 type ResponseType = InferResponseType<
@@ -32,6 +32,7 @@ export const useSignup = () => {
         queryKey: ["current"],
       });
     },
+    onError: (err) => toastError(err),
   });
 
   return mutation;

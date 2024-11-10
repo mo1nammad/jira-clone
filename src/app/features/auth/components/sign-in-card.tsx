@@ -29,7 +29,6 @@ import { Button } from "@/components/ui/button";
 import MotionSubmitButton from "@/components/motion-submit-btn";
 
 import { loginSchema } from "../schema";
-import { toastError } from "../utils";
 
 export const SignInCard = () => {
   useProtectSession();
@@ -45,14 +44,7 @@ export const SignInCard = () => {
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    signinUser(
-      { json: values },
-      {
-        onError: (err) => {
-          toastError(err);
-        },
-      }
-    );
+    signinUser({ json: values });
   }
 
   return (
