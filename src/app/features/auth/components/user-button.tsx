@@ -10,10 +10,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  // DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-// import { DottedSeperator } from "@/components/dotted-seperator";
 
 import { DottedSeperator } from "@/components/dotted-seperator";
 import Loader from "@/components/loader";
