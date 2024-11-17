@@ -8,7 +8,6 @@ import {
   Databases,
   Client,
   Storage,
-  type Users as UsersType,
   type Account as AccountType,
   type Databases as DatabasesType,
   type Storage as StorageType,
@@ -21,7 +20,6 @@ type AdditionalContext = {
     account: AccountType;
     databases: DatabasesType;
     storage: StorageType;
-    users: UsersType;
     user: Models.User<Models.Preferences>;
   };
 };

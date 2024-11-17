@@ -1,10 +1,17 @@
 import { Hono } from "hono";
 import { validator } from "hono/validator";
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
 
 import { createWorkspaceSchema } from "../schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
-import { DATABASE_ID, IMAGES_BUCKET_ID, WORKSPACES_ID } from "@/config";
+import {
+  DATABASE_ID,
+  IMAGES_BUCKET_ID,
+  MEMBERS_ID,
+  WORKSPACES_ID,
+} from "@/config";
+import { MemberRoles } from "../../members/types";
+import { generateInviteCode } from "@/lib/utils";
 
 const validateCreateWorkspace = validator("form", (value, c) => {
   // this one does not work with zvalidtor /:
@@ -38,11 +45,28 @@ const validateCreateWorkspace = validator("form", (value, c) => {
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
-    const { databases } = c.var;
+    const { databases, user } = c.var;
+
+    const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
+      Query.equal("userId", user.$id),
+    ]);
+
+    if (!members || members.total === 0)
+      return c.json({
+        workspaces: {
+          total: 0,
+          documents: [],
+        },
+      });
+
+    const workspacesIds: string[] = members.documents.map(
+      (member) => member.workspaceId
+    );
 
     const workspaces = await databases.listDocuments(
       DATABASE_ID,
-      WORKSPACES_ID
+      WORKSPACES_ID,
+      [Query.orderDesc("$createdAt"), Query.contains("$id", workspacesIds)]
     );
 
     return c.json({ workspaces });
@@ -80,8 +104,15 @@ const app = new Hono()
         name,
         userId,
         imageUrl: uploadedImageUrl,
+        inviteCode: generateInviteCode(25),
       }
     );
+
+    await databases.createDocument(DATABASE_ID, MEMBERS_ID, ID.unique(), {
+      userId,
+      workspaceId: workspace.$id,
+      role: MemberRoles.ADMIN,
+    });
 
     return c.json({
       workspace,

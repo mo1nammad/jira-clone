@@ -26,7 +26,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import MotionSubmitButton from "@/components/motion-submit-btn";
 
 type CreateWorkspaceFormProps = {
-  onCancel: () => void;
+  onCancel?: () => void;
 };
 
 type FormSchemaType = z.infer<typeof createWorkspaceSchema>;
